@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Routes, Route, useLocation } from "react-router-dom";
 import SpotifyWebApi from "spotify-web-api-js";
 import ForceGraph2D from "react-force-graph-2d";
 import {
@@ -9,13 +10,20 @@ import {
   SCOPES,
 } from "./config";
 import { generateCodeVerifierAndChallenge } from "./pkce";
+import HomePage from "./HomePage";
+import ExplorePage from "./ExplorePage";
+import AboutPage from "./AboutPage"; // ⬅️ nouveau
+import AboutProjectPage from "./AboutProjectPage";
 
 const spotifyApi = new SpotifyWebApi();
 
 function App() {
+  const location = useLocation();
+
   const [token, setToken] = useState(null);
   const [query, setQuery] = useState("");
   const [artist, setArtist] = useState(null);
+  const [artistLabel, setArtistLabel] = useState(null);
   const [albums, setAlbums] = useState([]);
   const [collabs, setCollabs] = useState([]);
   const [graphData, setGraphData] = useState({ nodes: [], links: [] });
@@ -92,6 +100,7 @@ function App() {
     window.localStorage.removeItem("spotify_access_token");
     window.sessionStorage.removeItem("pkce_verifier");
     setArtist(null);
+    setArtistLabel(null);
     setAlbums([]);
     setCollabs([]);
     setGraphData({ nodes: [], links: [] });
@@ -103,46 +112,62 @@ function App() {
     if (!query || !token) return;
 
     try {
-      // 1) chercher l'artiste (jusqu'à 10 résultats)
       const searchRes = await spotifyApi.searchArtists(query, { limit: 10 });
 
       const items = searchRes.artists?.items || [];
       if (items.length === 0) {
         setArtist(null);
+        setArtistLabel(null);
         setAlbums([]);
         setCollabs([]);
         setGraphData({ nodes: [], links: [] });
         return;
       }
 
-      // 2) essayer de trouver un nom qui matche exactement (insensible à la casse)
       const exact = items.find(
         (a) => a.name.toLowerCase() === query.trim().toLowerCase()
       );
       const foundArtist = exact || items[0];
       setArtist(foundArtist);
 
-      // 3) albums de l'artiste (simplified albums)
+      // Récup des albums
       const albumsRes = await spotifyApi.getArtistAlbums(foundArtist.id, {
         include_groups: "album,single",
         limit: 20,
       });
 
-      // 4) récupérer les IDs pour demander les "full albums" (labels + tracks)
       const albumIds = albumsRes.items.map((a) => a.id);
       if (albumIds.length === 0) {
         setAlbums([]);
         setCollabs([]);
         setGraphData({ nodes: [], links: [] });
+        setArtistLabel(null);
         return;
       }
 
-      // 5) batch sur /albums?ids=...
       const fullAlbumsRes = await spotifyApi.getAlbums(albumIds);
       const fullAlbums = fullAlbumsRes.albums;
       setAlbums(fullAlbums);
 
-      // 6) extraire les collaborations à partir des tracks
+      // calcul du label principal
+      const labelCounts = {};
+      fullAlbums.forEach((alb) => {
+        const lab = alb.label || "N/A";
+        labelCounts[lab] = (labelCounts[lab] || 0) + 1;
+      });
+
+      let mainLabel = null;
+      let maxCount = 0;
+      Object.entries(labelCounts).forEach(([lab, count]) => {
+        if (count > maxCount) {
+          maxCount = count;
+          mainLabel = lab;
+        }
+      });
+
+      setArtistLabel(mainLabel);
+
+      // construction des collabs
       const collabList = [];
 
       fullAlbums.forEach((album) => {
@@ -151,8 +176,6 @@ function App() {
 
         (album.tracks?.items || []).forEach((track) => {
           const trackArtists = track.artists || [];
-
-          // artistes autres que l'artiste principal
           const featured = trackArtists.filter((a) => a.id !== mainArtistId);
 
           featured.forEach((featArtist) => {
@@ -171,35 +194,33 @@ function App() {
 
       setCollabs(collabList);
 
-      // 7) construire les données du graphe
+      // graphe
       const nodesMap = new Map();
 
-      // nœud central = artiste principal
       nodesMap.set(foundArtist.id, {
         id: foundArtist.id,
         name: foundArtist.name,
         type: "main",
+        label: mainLabel || "N/A",
       });
 
-      // nœuds pour chaque collaborateur
       collabList.forEach((c) => {
         if (!nodesMap.has(c.collaboratorId)) {
           nodesMap.set(c.collaboratorId, {
             id: c.collaboratorId,
             name: c.collaboratorName,
             type: "collaborator",
-            label: c.label,
+            label: c.label || "N/A",
           });
         }
       });
 
       const nodes = Array.from(nodesMap.values());
 
-      // liens artiste principal ↔ collaborateur
       const links = collabList.map((c) => ({
         source: c.mainArtistId,
         target: c.collaboratorId,
-        label: c.label,
+        label: c.label || "N/A",
       }));
 
       setGraphData({ nodes, links });
@@ -209,106 +230,49 @@ function App() {
   };
 
   return (
-    <div
-      style={{
-        color: "white",
-        background: "#121212",
-        minHeight: "100vh",
-        padding: "2rem",
-      }}
-    >
-      <h1>Label Explorer - Auth + Network</h1>
-
-      {!token && (
-        <>
-          <p>Tu n'es pas connecté à Spotify.</p>
-          <button onClick={handleLogin}>Login with Spotify</button>
-        </>
-      )}
-
-      {token && (
-        <>
-          <p>Connecté ✅</p>
-          <button onClick={handleLogout}>Logout</button>
-
-          <hr style={{ margin: "2rem 0" }} />
-
-          <form onSubmit={handleSearch}>
-            <input
-              type="text"
-              placeholder="Cherche un artiste (ex: Stormzy, Drake)"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              style={{ padding: "0.5rem", width: "250px" }}
-            />
-            <button type="submit" style={{ marginLeft: "0.5rem" }}>
-              Rechercher
-            </button>
-          </form>
-
-          {artist && (
-            <div style={{ marginTop: "1.5rem" }}>
-              <h2>{artist.name}</h2>
-              {artist.images && artist.images[0] && (
-                <img
-                  src={artist.images[0].url}
-                  alt={artist.name}
-                  style={{ width: "150px", borderRadius: "8px" }}
-                />
-              )}
-            </div>
-          )}
-
-          {albums.length > 0 && (
-            <div style={{ marginTop: "1.5rem" }}>
-              <h3>Albums (avec labels)</h3>
-              <ul>
-                {albums.map((album) => (
-                  <li key={album.id}>
-                    <strong>{album.name}</strong> — Label :{" "}
-                    {album.label || "N/A"}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          {collabs.length > 0 && (
-            <div style={{ marginTop: "1.5rem" }}>
-              <h3>Collaborations trouvées</h3>
-              <ul>
-                {collabs.map((c, index) => (
-                  <li key={index}>
-                    {c.mainArtistName} ↔ {c.collaboratorName} — "
-                    {c.trackName}" ({c.albumName}) — Label : {c.label}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          {graphData.nodes.length > 0 && (
-            <div
-              style={{
-                marginTop: "2rem",
-                height: "500px",
-                border: "1px solid #333",
-              }}
-            >
-              <h3>Réseau de collaborations</h3>
-              <ForceGraph2D
-                graphData={graphData}
-                nodeLabel={(node) =>
-                  `${node.name}${node.label ? " (" + node.label + ")" : ""}`
-                }
-                nodeAutoColorBy="label"
-                linkColor={() => "rgba(255,255,255,0.4)"}
-              />
-            </div>
-          )}
-        </>
-      )}
-    </div>
+    <Routes location={location}>
+    <Route path="/" element={<HomePage />} />
+    <Route
+      path="/explore"
+      element={
+        <ExplorePage
+          token={token}
+          onLogin={handleLogin}
+          onLogout={handleLogout}
+          query={query}
+          setQuery={setQuery}
+          onSearch={handleSearch}
+          artist={artist}
+          artistLabel={artistLabel}
+          albums={albums}
+          collabs={collabs}
+          graphData={graphData}
+          ForceGraph2D={ForceGraph2D}
+        />
+      }
+    />
+    <Route path="/about" element={<AboutPage />} />
+    <Route path="/project" element={<AboutProjectPage />} />   {/* nouveau */}
+    <Route
+      path="/callback"
+      element={
+        <ExplorePage
+          token={token}
+          onLogin={handleLogin}
+          onLogout={handleLogout}
+          query={query}
+          setQuery={setQuery}
+          onSearch={handleSearch}
+          artist={artist}
+          artistLabel={artistLabel}
+          albums={albums}
+          collabs={collabs}
+          graphData={graphData}
+          ForceGraph2D={ForceGraph2D}
+        />
+      }
+    />
+  </Routes>
   );
 }
 
