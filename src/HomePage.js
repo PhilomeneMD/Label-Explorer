@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 function HomePage() {
   return (
     <>
-      {/* BLOC HOME BLEU PLEIN ÉCRAN */}
+      {/* FULL-SCREEN BLUE HERO */}
       <div
         style={{
           minHeight: "100vh",
@@ -57,7 +57,7 @@ function HomePage() {
               about me
             </Link>
 
-            {/* bouton contact qui scrolle */}
+            {/* contact scroll button */}
             <button
               type="button"
               onClick={() => {
@@ -81,16 +81,15 @@ function HomePage() {
               contact
             </button>
             <Link
-             to="/project"
-             style={{ color: "#ffffff", textDecoration: "none" }}
+              to="/project"
+              style={{ color: "#ffffff", textDecoration: "none" }}
             >
               about the project
             </Link>
-            
           </nav>
         </header>
 
-        {/* centre bleu qui prend tout l'espace */}
+        {/* blue center taking the space */}
         <div style={{ flex: 1 }} />
 
         {/* footer */}
@@ -127,14 +126,14 @@ function HomePage() {
                   fontWeight: 600,
                 }}
               >
-                Entrer dans le Live Explorer
+                Enter the Live Explorer
               </button>
             </Link>
           </div>
         </footer>
       </div>
 
-      {/* SECTION CONTACT EN DESSOUS, VISIBLE SEULEMENT APRÈS SCROLL */}
+      {/* CONTACT SECTION BELOW, ONLY VISIBLE AFTER SCROLL */}
       <section
         id="contact"
         style={{
@@ -161,8 +160,8 @@ function HomePage() {
             lineHeight: 1.6,
           }}
         >
-          Tu veux discuter du projet, collaborer, ou me parler de droits
-          d&apos;auteur ? Laisse-moi un message ici.
+          Want to talk about the project, collaborate, or share a story about
+          music rights? Leave me a message here.
         </p>
 
         <form
@@ -174,13 +173,13 @@ function HomePage() {
           }}
           onSubmit={(e) => {
             e.preventDefault();
-            alert("Merci pour ton message !");
+            alert("Thank you for your message!");
           }}
         >
           <input
             type="text"
             name="name"
-            placeholder="Ton nom"
+            placeholder="Your name"
             style={{
               padding: "0.8rem 1rem",
               borderRadius: "999px",
@@ -191,7 +190,7 @@ function HomePage() {
           <input
             type="email"
             name="email"
-            placeholder="Ton email"
+            placeholder="Your email"
             style={{
               padding: "0.8rem 1rem",
               borderRadius: "999px",
@@ -201,7 +200,7 @@ function HomePage() {
           />
           <textarea
             name="message"
-            placeholder="Ton message"
+            placeholder="Your message"
             rows={5}
             style={{
               padding: "0.8rem 1rem",
@@ -225,7 +224,7 @@ function HomePage() {
               fontSize: "0.95rem",
             }}
           >
-            Envoyer
+            Send
           </button>
         </form>
       </section>

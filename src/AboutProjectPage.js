@@ -58,7 +58,7 @@ function AboutProjectPage() {
         </nav>
       </header>
 
-      {/* CONTENU */}
+      {/* CONTENT */}
       <main
         style={{
           flex: 1,
@@ -79,24 +79,35 @@ function AboutProjectPage() {
           >
             about the project
           </h1>
-          <p style={{ fontSize: "1.05rem", lineHeight: 1.7, marginBottom: "1rem" }}>
-            LABEL EXPLORER est un outil expérimental qui cartographie les liens
-            entre artistes, albums et labels à partir de l&apos;API Spotify. Il
-            met en avant la dimension politique et économique des crédits dans
-            l&apos;industrie musicale.
+          <p
+            style={{
+              fontSize: "1.05rem",
+              lineHeight: 1.7,
+              marginBottom: "1rem",
+            }}
+          >
+            LABEL EXPLORER is an experimental tool that maps the
+            relationships between artists, albums and labels using the Spotify
+            Web API. It highlights the political and economic dimension of
+            credits in the music industry.
           </p>
-          <p style={{ fontSize: "1.05rem", lineHeight: 1.7, marginBottom: "1rem" }}>
-            En cherchant un artiste, tu obtiens son label principal, les labels
-            associés à ses projets, ainsi qu&apos;un graphe de collaborations
-            entre artistes et maisons de disques. L&apos;objectif est de rendre
-            visible les structures qui influencent la circulation de la musique.
+          <p
+            style={{
+              fontSize: "1.05rem",
+              lineHeight: 1.7,
+              marginBottom: "1rem",
+            }}
+          >
+            When you search for an artist, you get their main label, the labels
+            associated with their projects, and a collaboration graph that shows
+            how artists and record companies are connected. The goal is to make
+            visible the structures that shape how music circulates.
           </p>
           <p style={{ fontSize: "1.05rem", lineHeight: 1.7 }}>
-            Le projet est développé dans une démarche de recherche : les données
-            ne sont pas stockées et servent uniquement à la visualisation en
-            temps réel. Il peut évoluer vers d&apos;autres sources de données
-            (collectives, indépendantes) pour sortir du prisme d&apos;une seule
-            plateforme.
+            The project is built in a research mindset: data is not stored and
+            is only used for real‑time visualisation. In the future, it could
+            integrate other data sources (collective, independent) to move
+            beyond the lens of a single platform.
           </p>
         </div>
 
@@ -122,9 +133,9 @@ function AboutProjectPage() {
               what you can explore
             </h3>
             <ul style={{ paddingLeft: "1.2rem", lineHeight: 1.6 }}>
-              <li>les labels dominants d’un artiste ;</li>
-              <li>les collaborations récurrentes entre artistes ;</li>
-              <li>la concentration des collaborations par label.</li>
+              <li>an artist&apos;s dominant labels;</li>
+              <li>recurring collaborations between artists;</li>
+              <li>how collaborations concentrate around specific labels.</li>
             </ul>
           </div>
           <div>
@@ -132,8 +143,9 @@ function AboutProjectPage() {
               limitations
             </h3>
             <p>
-              Basé sur les métadonnées Spotify : certains crédits ou labels
-              peuvent être incomplets, flous ou normalisés par la plateforme.
+              The tool relies on Spotify metadata, which means some credits or
+              label names may be incomplete, ambiguous or normalised by the
+              platform.
             </p>
           </div>
         </div>

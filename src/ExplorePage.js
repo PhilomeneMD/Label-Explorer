@@ -24,7 +24,7 @@ function ExplorePage({
         fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, sans-serif",
       }}
     >
-      {/* Nav identique à la home, mais fond jaune */}
+      {/* Nav */}
       <header
         style={{
           display: "flex",
@@ -61,7 +61,6 @@ function ExplorePage({
           <button
             type="button"
             onClick={() => {
-              // scroll vers la section contact de la home
               window.location.href = "/#contact";
             }}
             style={{
@@ -87,7 +86,7 @@ function ExplorePage({
         </nav>
       </header>
 
-      {/* Bandeau principal */}
+      {/* Main banner */}
       <main
         style={{
           padding: "2rem 3rem 3rem",
@@ -101,7 +100,7 @@ function ExplorePage({
             marginBottom: "3rem",
           }}
         >
-          {/* Texte explicatif à gauche */}
+          {/* Text left */}
           <div style={{ maxWidth: "520px" }}>
             <h2
               style={{
@@ -111,7 +110,7 @@ function ExplorePage({
                 fontWeight: 800,
               }}
             >
-              LOG IN TO GET LABEL ASSOCIATION
+              LOG IN TO EXPLORE LABEL NETWORKS
             </h2>
 
             <p
@@ -121,10 +120,10 @@ function ExplorePage({
                 marginBottom: "1.5rem",
               }}
             >
-              Connecte ton compte Spotify pour explorer en temps réel les liens
-              entre un artiste, ses albums et les labels qui les publient. Rien
-              n&apos;est stocké : les données viennent directement de l&apos;API
-              Spotify à chaque recherche.
+              Connect your Spotify account to explore in real time the links
+              between an artist, their releases and the labels that publish
+              them. Nothing is stored: all data comes directly from the Spotify
+              API on each search.
             </p>
 
             <p
@@ -134,7 +133,7 @@ function ExplorePage({
                 marginBottom: "0.6rem",
               }}
             >
-              Tu obtiens pour chaque artiste :
+              For each artist, you can see:
             </p>
             <ul
               style={{
@@ -145,13 +144,13 @@ function ExplorePage({
                 lineHeight: 1.6,
               }}
             >
-              <li>son label principal (calculé à partir de ses albums) ;</li>
-              <li>les labels de ses projets et singles ;</li>
-              <li>un graphe des collaborations entre artistes et labels.</li>
+              <li>their main label (computed from their albums);</li>
+              <li>the labels behind their albums, EPs and singles;</li>
+              <li>a graph of collaborations between artists and labels.</li>
             </ul>
           </div>
 
-          {/* Login / état à droite */}
+          {/* Login / state right */}
           <div
             style={{
               textAlign: "right",
@@ -167,7 +166,7 @@ function ExplorePage({
                     marginBottom: "1rem",
                   }}
                 >
-                  Clique ici pour lancer la démo.
+                  Click here to start the demo.
                 </p>
                 <button
                   onClick={onLogin}
@@ -194,7 +193,7 @@ function ExplorePage({
                     marginBottom: "0.6rem",
                   }}
                 >
-                  Connecté à Spotify. Tu peux lancer des recherches.
+                  You&apos;re connected to Spotify. You can start exploring.
                 </p>
                 <button
                   onClick={onLogout}
@@ -216,7 +215,7 @@ function ExplorePage({
           </div>
         </section>
 
-        {/* Zone fonctionnelle : search + résultats */}
+        {/* Functional zone: search + results */}
         {token && (
           <section
             style={{
@@ -231,14 +230,13 @@ function ExplorePage({
                 htmlFor="artist-search"
                 style={{ display: "block", marginBottom: "0.5rem" }}
               >
-                Tape un nom d&apos;artiste pour explorer ses labels et ses
-                collaborations :
+                Type an artist name to explore their labels and collaborations:
               </label>
               <div style={{ display: "flex", gap: "0.8rem" }}>
                 <input
                   id="artist-search"
                   type="text"
-                  placeholder="Look up an artist (ex: Stormzy, Drake)"
+                  placeholder="Look up an artist (e.g. Stormzy, Drake)"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   style={{
@@ -262,7 +260,7 @@ function ExplorePage({
                     fontSize: "1rem",
                   }}
                 >
-                  Rechercher
+                  Search
                 </button>
               </div>
             </form>
@@ -272,7 +270,7 @@ function ExplorePage({
                 <h2>{artist.name}</h2>
                 {artistLabel && (
                   <p style={{ fontWeight: 600 }}>
-                    Label principal : {artistLabel}
+                    Main label: {artistLabel}
                   </p>
                 )}
                 {artist.images && artist.images[0] && (
@@ -287,15 +285,15 @@ function ExplorePage({
 
             {albums.length > 0 && (
               <div style={{ marginTop: "1rem" }}>
-                <h3>Albums et labels</h3>
+                <h3>Releases and labels</h3>
                 <p style={{ marginBottom: "0.4rem" }}>
-                  Chaque entrée correspond à un album ou single et au label qui
-                  l&apos;a publié.
+                  Each line is an album or single and the label that released
+                  it.
                 </p>
                 <ul>
                   {albums.map((album) => (
                     <li key={album.id}>
-                      <strong>{album.name}</strong> — Label :{" "}
+                      <strong>{album.name}</strong> — Label:{" "}
                       {album.label || "N/A"}
                     </li>
                   ))}
@@ -305,17 +303,16 @@ function ExplorePage({
 
             {collabs.length > 0 && (
               <div style={{ marginTop: "1.5rem" }}>
-                <h3>Collaborations trouvées</h3>
+                <h3>Collaborations found</h3>
                 <p style={{ marginBottom: "0.4rem" }}>
-                  Ici, chaque ligne représente un morceau où l&apos;artiste
-                  principal invite un autre artiste. Le label est celui de
-                  l&apos;album qui porte le titre.
+                  Each line is a track where the main artist features another
+                  artist. The label comes from the album that hosts the track.
                 </p>
                 <ul>
                   {collabs.map((c, index) => (
                     <li key={index}>
                       {c.mainArtistName} ↔ {c.collaboratorName} — "
-                      {c.trackName}" ({c.albumName}) — Label : {c.label}
+                      {c.trackName}" ({c.albumName}) — Label: {c.label}
                     </li>
                   ))}
                 </ul>
@@ -333,15 +330,15 @@ function ExplorePage({
               >
                 <div style={{ padding: "0.8rem 1rem", background: "#fff3aa" }}>
                   <h3 style={{ marginBottom: "0.3rem" }}>
-                    Graphe des collaborations
+                    Collaboration graph
                   </h3>
                   <p style={{ fontSize: "0.95rem", lineHeight: 1.5 }}>
-                    Chaque nœud représente un artiste. Le nœud central est
-                    l&apos;artiste recherché, les nœuds autour sont les
-                    collaborateurs. Les couleurs indiquent les labels
-                    associés&nbsp;: des artistes avec la même couleur partagent
-                    un label sur au moins un projet. Les liens montrent sur
-                    quels morceaux ils apparaissent ensemble.
+                    Each node represents an artist. The central node is the
+                    artist you searched for, and the surrounding nodes are their
+                    collaborators. Colors indicate associated labels: artists
+                    that share the same color share at least one project under
+                    the same label. Links show which tracks they appear on
+                    together.
                   </p>
                 </div>
                 <div style={{ height: "450px" }}>

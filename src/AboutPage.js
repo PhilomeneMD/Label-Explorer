@@ -1,7 +1,7 @@
 // AboutPage.js
 import React from "react";
 import { Link } from "react-router-dom";
-import yourPhoto from "./myphoto.JPG"; // adapte le chemin relatif simple
+import yourPhoto from "./myphoto.JPG";
 
 function AboutPage() {
   return (
@@ -15,7 +15,7 @@ function AboutPage() {
         flexDirection: "column",
       }}
     >
-      {/* NAV EN HAUT */}
+      {/* NAV */}
       <header
         style={{
           display: "flex",
@@ -81,7 +81,7 @@ function AboutPage() {
         </nav>
       </header>
 
-      {/* CONTENU ABOUT */}
+      {/* ABOUT CONTENT */}
       <main
         style={{
           flex: 1,
@@ -105,7 +105,7 @@ function AboutPage() {
           about me
         </h2>
 
-        {/* Colonne gauche : photo + bulles */}
+        {/* Left column: photo + bubbles */}
         <div
           style={{
             display: "flex",
@@ -149,7 +149,7 @@ function AboutPage() {
           >
             FIGHT FOR
             <br />
-            ARTIST VOICE
+            ARTISTS&apos; VOICES
           </div>
 
           <div
@@ -174,7 +174,7 @@ function AboutPage() {
           </div>
         </div>
 
-        {/* Colonne droite : texte */}
+        {/* Right column: text */}
         <div
           style={{
             display: "flex",
@@ -210,20 +210,21 @@ function AboutPage() {
             }}
           >
             <p>
-              After a 3‑year data science degree, I’ve acquired skills in
-              quantitative and qualitative data analysis, especially in the art
-              and culture sector. I also explore how Large Language Models can
-              support artists.
+              After a 3‑year data science degree, I&apos;ve developed strong
+              skills in quantitative and qualitative data analysis, especially
+              in the art and culture sector. I&apos;m also interested in how
+              large language models can be used to support artists.
             </p>
             <p>
               My personal projects include a study on manipulative language in
-              18th‑century literature and what musical tendencies make the most
-              difference in how we perceive a song.
+              18th‑century literature and an exploration of which musical
+              tendencies make the most difference in how we experience a song.
             </p>
             <p>
-              In my free time, I engage in creative activities as much as I can:
-              writing, experimenting with visual design, and collecting stories
-              about how artists navigate copyright.
+              In my free time, I try to stay as close to creative practice as
+              possible: writing, experimenting with visual design, and
+              collecting stories about how artists navigate copyright and
+              contracts.
             </p>
           </div>
         </div>
